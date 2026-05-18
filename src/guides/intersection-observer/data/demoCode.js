@@ -195,3 +195,66 @@ function useScrollSpy(sectionRefs) {
 
   return activeIndex;
 }`;
+
+export const WINDOWING_CODE = `const ITEM_HEIGHT = 48;
+const OVERSCAN = 3;
+
+// Hook: calculates which indices are currently visible
+function useVirtualList(containerRef, totalCount) {
+  const [range, setRange] = useState({ start: 0, end: 20 });
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const scrollTop = el.scrollTop;
+      const clientHeight = el.clientHeight;
+
+      const start = Math.max(0, Math.floor(scrollTop / ITEM_HEIGHT) - OVERSCAN);
+      const end = Math.min(
+        totalCount,
+        Math.ceil((scrollTop + clientHeight) / ITEM_HEIGHT) + OVERSCAN,
+      );
+      setRange({ start, end });
+    };
+
+    update(); // run once on mount
+    el.addEventListener('scroll', update, { passive: true });
+    return () => el.removeEventListener('scroll', update);
+  }, [containerRef, totalCount]);
+
+  return range;
+}
+
+// Usage: virtual list container
+function VirtualList({ totalCount }) {
+  const containerRef = useRef(null);
+  const { start, end } = useVirtualList(containerRef, totalCount);
+
+  return (
+    // Fixed-height scrollable container
+    <div ref={containerRef} style={{ height: 400, overflowY: 'auto' }}>
+
+      {/* Spacer — full logical height keeps scrollbar accurate */}
+      <div style={{ height: totalCount * ITEM_HEIGHT, position: 'relative' }}>
+
+        {/* Only render the visible window (~20 items) */}
+        {Array.from({ length: end - start }, (_, i) => start + i).map((index) => (
+          <div
+            key={index}
+            style={{
+              position: 'absolute',
+              top: index * ITEM_HEIGHT, // place at correct scroll position
+              height: ITEM_HEIGHT,
+              left: 0,
+              right: 0,
+            }}
+          >
+            Item #{index + 1}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}`;

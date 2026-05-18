@@ -6,6 +6,7 @@ import ScrollAnimations from './demos/ScrollAnimations';
 import InfiniteScroll from './demos/InfiniteScroll';
 import CustomRoot from './demos/CustomRoot';
 import ScrollSpy from './demos/ScrollSpy';
+import WindowingDemo from './demos/WindowingDemo';
 
 export default {
   id: 'intersection-observer',
@@ -23,5 +24,6 @@ export default {
     { id: 'infinite-scroll',      label: 'Infinite Scroll',                component: InfiniteScroll },
     { id: 'custom-root',          label: 'Custom Root Element',            component: CustomRoot },
     { id: 'scroll-spy',           label: 'Scroll Spy',                     component: ScrollSpy },
+    { id: 'windowing',            label: 'Windowing / Virtual Scroll',     component: WindowingDemo },
   ],
 };

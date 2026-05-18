@@ -44,4 +44,13 @@ export const GUIDE_COLORS = {
     icon:      'bg-cyan-900/30 text-cyan-300',
     glow:      'hover:shadow-cyan-900/20',
   },
+  rose: {
+    active:    'bg-rose-600 text-white',
+    badge:     'bg-rose-500 text-white',
+    inactive:  'bg-gray-800 text-gray-500',
+    border:    'border-rose-700/40 hover:border-rose-500/70',
+    cardBadge: 'bg-rose-900/40 text-rose-400',
+    icon:      'bg-rose-900/30 text-rose-300',
+    glow:      'hover:shadow-rose-900/20',
+  },
 };

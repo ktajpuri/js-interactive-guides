@@ -4,6 +4,7 @@ import eventLoopConfig from './event-loop/config';
 import resizeObserverConfig from './resize-observer/config';
 import webWorkersConfig from './web-workers/config';
 import memoryGcConfig from './memory-gc/config';
+import renderingPipelineConfig from './rendering-pipeline/config';
 
 export const GUIDES = [
   intersectionObserverConfig,
@@ -12,4 +13,5 @@ export const GUIDES = [
   resizeObserverConfig,
   webWorkersConfig,
   memoryGcConfig,
+  renderingPipelineConfig,
 ];

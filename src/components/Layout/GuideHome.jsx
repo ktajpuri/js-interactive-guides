@@ -57,7 +57,7 @@ export default function GuideHome({ guides, onSelectGuide }) {
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gray-800/50 text-gray-600">+</div>
             <div>
               <div className="text-sm font-semibold text-gray-500">More coming soon</div>
-              <div className="text-xs text-gray-600 mt-1">Event Loop, ResizeObserver, Memory Leaks…</div>
+              <div className="text-xs text-gray-600 mt-1">Memory Leaks, CSS Containment, Generators…</div>
             </div>
           </div>
         </li>

@@ -26,4 +26,13 @@ export const GUIDE_COLORS = {
     icon:       'bg-orange-900/30 text-orange-300',
     glow:       'hover:shadow-orange-900/20',
   },
+  purple: {
+    active:    'bg-purple-600 text-white',
+    badge:     'bg-purple-500 text-white',
+    inactive:  'bg-gray-800 text-gray-500',
+    border:    'border-purple-700/40 hover:border-purple-500/70',
+    cardBadge: 'bg-purple-900/40 text-purple-400',
+    icon:      'bg-purple-900/30 text-purple-300',
+    glow:      'hover:shadow-purple-900/20',
+  },
 };

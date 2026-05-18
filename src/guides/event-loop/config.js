@@ -2,6 +2,8 @@ import TaskQueueDemo from './demos/TaskQueueDemo';
 import ExecutionOrderDemo from './demos/ExecutionOrderDemo';
 import RafVsSetTimeoutDemo from './demos/RafVsSetTimeoutDemo';
 import MicrotaskStarvationDemo from './demos/MicrotaskStarvationDemo';
+import DebounceThrottleDemo from './demos/DebounceThrottleDemo';
+import AbortControllerDemo from './demos/AbortControllerDemo';
 
 export default {
   id: 'event-loop',
@@ -15,5 +17,7 @@ export default {
     { id: 'execution-order',       label: 'Execution Order Explorer', component: ExecutionOrderDemo },
     { id: 'raf-vs-settimeout',     label: 'rAF vs setTimeout',        component: RafVsSetTimeoutDemo },
     { id: 'microtask-starvation',  label: 'Microtask Starvation',     component: MicrotaskStarvationDemo },
+    { id: 'debounce-throttle',     label: 'Debounce / Throttle / rAF', component: DebounceThrottleDemo },
+    { id: 'abort-controller',      label: 'AbortController & Race Conditions', component: AbortControllerDemo },
   ],
 };

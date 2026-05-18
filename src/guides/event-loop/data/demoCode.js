@@ -84,3 +84,83 @@ function goodLoop(count) {
 if ('scheduler' in window) {
   scheduler.postTask(() => doWork(), { priority: 'background' });
 }`;
+
+export const DEBOUNCE_THROTTLE_CODE = `// Debounce: fires ONLY after the user stops for N ms
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+// Throttle: fires at most once per N ms
+function throttle(fn, interval) {
+  let lastTime = 0;
+  return (...args) => {
+    const now = Date.now();
+    if (now - lastTime >= interval) {
+      lastTime = now;
+      fn(...args);
+    }
+  };
+}
+
+// rAF throttle: fires once per animation frame (~16ms at 60Hz)
+// Perfect for visual updates — synced to the browser's paint cycle
+function rafThrottle(fn) {
+  let scheduled = false;
+  let latestArgs;
+  return (...args) => {
+    latestArgs = args;
+    if (!scheduled) {
+      scheduled = true;
+      requestAnimationFrame(() => {
+        fn(...latestArgs); // always uses most recent args
+        scheduled = false;
+      });
+    }
+  };
+}
+
+// Usage: which to use?
+// Search/autocomplete input → debounce (fire after user stops typing)
+// Scroll/resize handlers    → throttle (fire at regular intervals)
+// Canvas/animation updates  → rAF throttle (synced to paint cycle)
+const onSearch = debounce(fetchResults, 300);
+const onScroll = throttle(updateUI, 100);
+const onMouseMove = rafThrottle(updateCanvas);`;
+
+export const ABORT_CONTROLLER_CODE = `// The race condition: older response arrives after newer one
+async function searchNaive(query) {
+  const data = await fetch(\`/api/search?q=\${query}\`).then(r => r.json());
+  setResults(data); // BUG: may be stale!
+}
+
+// Fix 1: ref guard — ignore stale responses (but request still completes)
+const latestIdRef = { current: 0 };
+async function searchWithRefGuard(query) {
+  const id = ++latestIdRef.current;
+  const data = await fetch(\`/api/search?q=\${query}\`).then(r => r.json());
+  if (id !== latestIdRef.current) return; // discard stale result
+  setResults(data);
+}
+
+// Fix 2: AbortController — cancel the in-flight request immediately
+const controllerRef = { current: null };
+async function searchWithAbort(query) {
+  controllerRef.current?.abort(); // cancel previous request
+  const controller = new AbortController();
+  controllerRef.current = controller;
+
+  try {
+    const data = await fetch(\`/api/search?q=\${query}\`, {
+      signal: controller.signal, // pass signal to fetch
+    }).then(r => r.json());
+    setResults(data);
+  } catch (err) {
+    if (err.name === 'AbortError') return; // expected — ignore
+    throw err;
+  }
+}`;
+

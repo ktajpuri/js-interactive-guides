@@ -35,4 +35,13 @@ export const GUIDE_COLORS = {
     icon:      'bg-purple-900/30 text-purple-300',
     glow:      'hover:shadow-purple-900/20',
   },
+  cyan: {
+    active:    'bg-cyan-600 text-white',
+    badge:     'bg-cyan-500 text-white',
+    inactive:  'bg-gray-800 text-gray-500',
+    border:    'border-cyan-700/40 hover:border-cyan-500/70',
+    cardBadge: 'bg-cyan-900/40 text-cyan-400',
+    icon:      'bg-cyan-900/30 text-cyan-300',
+    glow:      'hover:shadow-cyan-900/20',
+  },
 };

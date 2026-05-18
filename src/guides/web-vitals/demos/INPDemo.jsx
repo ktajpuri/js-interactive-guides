@@ -1,13 +1,14 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { MetricGauge } from '../components/MetricGauge';
 import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { LabeledSlider } from '../../../components/Shared/LabeledSlider';
 import { INP_CODE } from '../data/demoCode';
 
 const THRESHOLDS = { good: 200, poor: 500 };
 
 function blockMainThread(ms) {
   const start = performance.now();
-  while (performance.now() - start < ms) { /* intentionally blocks */ }
+  while (performance.now() - start < ms) {}
 }
 
 function measureINP(t0, callback) {
@@ -57,26 +58,23 @@ export default function INPDemo() {
           High INP means the page feels unresponsive. The cause: <strong className="text-white">long JavaScript tasks blocking the main thread</strong> after an interaction.
           Click both buttons and compare the measured delay.
         </p>
-        <div className="mt-3 px-4 py-2.5 bg-yellow-900/20 border border-yellow-800/50 rounded-lg text-sm text-yellow-300">
-          ⚠️ The "Sluggish" button intentionally freezes the page for {blockingMs}ms — this is what high INP feels like.
+        <div className="mt-3 px-4 py-2.5 bg-yellow-900/20 border border-yellow-800/50 rounded-lg text-sm text-yellow-300" role="alert">
+          The "Sluggish" button intentionally freezes the page for {blockingMs}ms — this is what high INP feels like.
         </div>
       </header>
 
       {/* Controls */}
       <div className="bg-gray-900 rounded-xl p-5 border border-gray-800 space-y-4">
         <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Controls</h2>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Blocking work duration</span>
-            <span className="font-mono text-green-400 font-bold">{blockingMs}ms</span>
-          </div>
-          <input type="range" min="0" max="1000" step="50" value={blockingMs}
-            onChange={e => setBlockingMs(Number(e.target.value))}
-            className="w-full accent-green-500" />
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>0ms (instant)</span><span>500ms (poor)</span><span>1000ms (very poor)</span>
-          </div>
-        </div>
+        <LabeledSlider
+          label="Blocking work duration"
+          value={blockingMs}
+          min={0}
+          max={1000}
+          step={50}
+          onChange={setBlockingMs}
+          markers={['0ms (instant)', '500ms (poor)', '1000ms (very poor)']}
+        />
       </div>
 
       {/* Buttons side by side */}
@@ -84,7 +82,7 @@ export default function INPDemo() {
         <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-4">
           <div className="text-xs font-semibold text-green-400 uppercase tracking-widest">Responsive Button</div>
           <button onClick={handleFast}
-            className={`w-full py-6 rounded-xl text-lg font-bold transition-all duration-100 border-2 ${fastColor ? 'bg-green-600 border-green-500 text-white' : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-green-600'}`}>
+            className={`w-full py-6 rounded-xl text-lg font-bold transition-all duration-100 border-2 focus:outline-none focus:ring-2 focus:ring-green-400 ${fastColor ? 'bg-green-600 border-green-500 text-white' : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-green-600'}`}>
             Click Me
           </button>
           <p className="text-xs text-gray-500">No blocking work. Paint happens immediately after setState.</p>
@@ -93,7 +91,7 @@ export default function INPDemo() {
         <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-4">
           <div className="text-xs font-semibold text-red-400 uppercase tracking-widest">Sluggish Button ({blockingMs}ms block)</div>
           <button onClick={handleSlow}
-            className={`w-full py-6 rounded-xl text-lg font-bold transition-all duration-100 border-2 ${slowColor ? 'bg-red-600 border-red-500 text-white' : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-red-600'}`}>
+            className={`w-full py-6 rounded-xl text-lg font-bold transition-all duration-100 border-2 focus:outline-none focus:ring-2 focus:ring-red-400 ${slowColor ? 'bg-red-600 border-red-500 text-white' : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-red-600'}`}>
             {status || 'Click Me'}
           </button>
           <p className="text-xs text-gray-500">Runs a synchronous blocking loop before updating. You'll feel the freeze.</p>
@@ -106,9 +104,14 @@ export default function INPDemo() {
         <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
           <div className="px-5 py-3 border-b border-gray-800 flex justify-between items-center">
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Click History</span>
-            <button onClick={() => { setHistory([]); setWorstINP(null); }} className="text-xs text-gray-600 hover:text-white transition-colors">Clear</button>
+            <button
+              onClick={() => { setHistory([]); setWorstINP(null); }}
+              className="text-xs text-gray-600 hover:text-white transition-colors focus:outline-none focus:underline"
+            >
+              Clear
+            </button>
           </div>
-          <div className="h-48 overflow-y-auto divide-y divide-gray-800/50">
+          <div className="h-48 overflow-y-auto divide-y divide-gray-800/50" aria-live="polite" aria-label="Click history">
             {history.length === 0 && <div className="text-center text-gray-600 text-sm py-8">Click a button to measure INP</div>}
             {history.map(item => (
               <div key={item.id} className="flex items-center justify-between px-5 py-2.5">

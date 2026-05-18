@@ -1,48 +1,67 @@
-import { useState } from 'react';
+import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { GUIDES } from './guides/index';
 import { Sidebar } from './components/Layout/Sidebar';
 import GuideHome from './components/Layout/GuideHome';
 
-export default function App() {
-  const [activeGuideId, setActiveGuideId] = useState(null);
-  const [activeDemoId, setActiveDemoId] = useState(null);
+function GuideRedirect() {
+  const { guideId } = useParams();
+  const guide = GUIDES.find(g => g.id === guideId);
+  if (!guide) return <Navigate to="/" replace />;
+  return <Navigate to={`/${guideId}/${guide.sections[0].id}`} replace />;
+}
 
-  const guide = GUIDES.find(g => g.id === activeGuideId) ?? null;
-  const ActiveComponent = guide?.sections.find(s => s.id === activeDemoId)?.component ?? null;
+function GuidePage() {
+  const { guideId, demoId } = useParams();
+  const navigate = useNavigate();
 
-  const selectGuide = (id) => {
-    const g = GUIDES.find(g => g.id === id);
-    setActiveGuideId(id);
-    setActiveDemoId(g?.sections[0]?.id ?? null);
-  };
+  const guide = GUIDES.find(g => g.id === guideId);
+  if (!guide) return <Navigate to="/" replace />;
 
-  const goHome = () => {
-    setActiveGuideId(null);
-    setActiveDemoId(null);
-  };
+  const section = guide.sections.find(s => s.id === demoId);
+  if (!section) return <Navigate to={`/${guideId}/${guide.sections[0].id}`} replace />;
 
-  if (!guide) {
-    return (
-      <div className="min-h-screen bg-gray-950 text-gray-100">
-        <GuideHome guides={GUIDES} onSelectGuide={selectGuide} />
-      </div>
-    );
-  }
+  const ActiveComponent = section.component;
 
   return (
     <div className="flex min-h-screen bg-gray-950 text-gray-100">
       <Sidebar
         sections={guide.sections}
-        activeSection={activeDemoId}
-        onNavigate={setActiveDemoId}
+        activeSection={demoId}
+        onNavigate={(id) => navigate(`/${guideId}/${id}`)}
         guide={guide}
-        onBack={goHome}
+        onBack={() => navigate('/')}
       />
       <main className="flex-1 md:ml-64 pt-14 md:pt-0">
-        <div key={activeDemoId} className="animate-fadeIn min-h-screen p-6 md:p-10">
-          {ActiveComponent && <ActiveComponent />}
+        <div key={demoId} className="animate-fadeIn min-h-screen p-6 md:p-10">
+          <ActiveComponent />
         </div>
       </main>
     </div>
+  );
+}
+
+function Home() {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100">
+      <GuideHome
+        guides={GUIDES}
+        onSelectGuide={(id) => {
+          const g = GUIDES.find(g => g.id === id);
+          navigate(`/${id}/${g.sections[0].id}`);
+        }}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/:guideId" element={<GuideRedirect />} />
+      <Route path="/:guideId/:demoId" element={<GuidePage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

@@ -1,23 +1,4 @@
-const COLOR_MAP = {
-  blue: {
-    border: 'border-blue-700/40 hover:border-blue-500/70',
-    badge: 'bg-blue-900/40 text-blue-400',
-    icon: 'bg-blue-900/30 text-blue-300',
-    glow: 'hover:shadow-blue-900/20',
-  },
-  green: {
-    border: 'border-green-700/40 hover:border-green-500/70',
-    badge: 'bg-green-900/40 text-green-400',
-    icon: 'bg-green-900/30 text-green-300',
-    glow: 'hover:shadow-green-900/20',
-  },
-  orange: {
-    border: 'border-orange-700/40 hover:border-orange-500/70',
-    badge: 'bg-orange-900/40 text-orange-400',
-    icon: 'bg-orange-900/30 text-orange-300',
-    glow: 'hover:shadow-orange-900/20',
-  },
-};
+import { GUIDE_COLORS } from '../../theme';
 
 export default function GuideHome({ guides, onSelectGuide }) {
   return (
@@ -25,7 +6,7 @@ export default function GuideHome({ guides, onSelectGuide }) {
       {/* Header */}
       <div className="max-w-3xl mx-auto mb-14 text-center">
         <div className="inline-flex items-center gap-2 bg-gray-900 border border-gray-800 text-gray-400 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" aria-hidden="true" />
           Interactive Learning
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
@@ -38,52 +19,49 @@ export default function GuideHome({ guides, onSelectGuide }) {
       </div>
 
       {/* Guide cards */}
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <ul className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 list-none p-0" role="list">
         {guides.map((guide) => {
-          const c = COLOR_MAP[guide.color] ?? COLOR_MAP.blue;
+          const c = GUIDE_COLORS[guide.color] ?? GUIDE_COLORS.blue;
           return (
-            <button
-              key={guide.id}
-              onClick={() => onSelectGuide(guide.id)}
-              className={`text-left bg-gray-900 rounded-2xl border p-6 transition-all duration-200 hover:shadow-xl ${c.border} ${c.glow} group`}
-            >
-              {/* Icon */}
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 ${c.icon}`}>
-                {guide.icon}
-              </div>
-
-              {/* Title + description */}
-              <h2 className="text-lg font-bold text-white mb-2 group-hover:text-white transition-colors">
-                {guide.label}
-              </h2>
-              <p className="text-sm text-gray-400 leading-relaxed mb-5">
-                {guide.description}
-              </p>
-
-              {/* Footer */}
-              <div className="flex items-center justify-between">
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${c.badge}`}>
-                  {guide.sections.length} demos
-                </span>
-                <span className="text-gray-600 group-hover:text-gray-400 transition-colors text-sm">
-                  Explore →
-                </span>
-              </div>
-            </button>
+            <li key={guide.id}>
+              <button
+                onClick={() => onSelectGuide(guide.id)}
+                className={`w-full text-left bg-gray-900 rounded-2xl border p-6 transition-all duration-200 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/20 ${c.border} ${c.glow} group`}
+                aria-label={`${guide.label} — ${guide.sections.length} demos`}
+              >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-5 ${c.icon}`} aria-hidden="true">
+                  {guide.icon}
+                </div>
+                <h2 className="text-lg font-bold text-white mb-2">
+                  {guide.label}
+                </h2>
+                <p className="text-sm text-gray-400 leading-relaxed mb-5">
+                  {guide.description}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${c.cardBadge}`}>
+                    {guide.sections.length} demos
+                  </span>
+                  <span className="text-gray-600 group-hover:text-gray-400 transition-colors text-sm" aria-hidden="true">
+                    Explore →
+                  </span>
+                </div>
+              </button>
+            </li>
           );
         })}
 
         {/* Coming soon placeholder */}
-        <div className="text-left bg-gray-900/50 rounded-2xl border border-dashed border-gray-800 p-6 flex flex-col items-start justify-center gap-3 opacity-60">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gray-800/50 text-gray-600">
-            +
+        <li aria-hidden="true">
+          <div className="text-left bg-gray-900/50 rounded-2xl border border-dashed border-gray-800 p-6 flex flex-col items-start justify-center gap-3 opacity-60">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-gray-800/50 text-gray-600">+</div>
+            <div>
+              <div className="text-sm font-semibold text-gray-500">More coming soon</div>
+              <div className="text-xs text-gray-600 mt-1">Event Loop, ResizeObserver, Memory Leaks…</div>
+            </div>
           </div>
-          <div>
-            <div className="text-sm font-semibold text-gray-500">More coming soon</div>
-            <div className="text-xs text-gray-600 mt-1">Promises, Event Loop, Generators…</div>
-          </div>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   );
 }

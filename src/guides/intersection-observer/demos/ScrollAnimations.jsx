@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { SCROLL_ANIMATIONS_CODE } from '../../data/demoCode';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { SCROLL_ANIMATIONS_CODE } from '../data/demoCode';
 
 const ANIMATION_TYPES = [
   { id: 'fade', label: 'Fade In' },

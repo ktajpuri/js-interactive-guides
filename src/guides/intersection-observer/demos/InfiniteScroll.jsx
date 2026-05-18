@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { INFINITE_SCROLL_CODE } from '../../data/demoCode';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { INFINITE_SCROLL_CODE } from '../data/demoCode';
 
 let globalId = 1;
 

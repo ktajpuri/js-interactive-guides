@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from 'react';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { ROOT_MARGIN_CODE } from '../../data/demoCode';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { ROOT_MARGIN_CODE } from '../data/demoCode';
 import { useEffect } from 'react';
 
 const PRESETS = [

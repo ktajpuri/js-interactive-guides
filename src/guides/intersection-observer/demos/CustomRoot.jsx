@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { CUSTOM_ROOT_CODE } from '../../data/demoCode';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { CUSTOM_ROOT_CODE } from '../data/demoCode';
 
 const CONTAINER_ITEMS = Array.from({ length: 12 }, (_, i) => ({
   id: i + 1,

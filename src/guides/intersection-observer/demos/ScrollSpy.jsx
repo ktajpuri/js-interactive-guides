@@ -1,7 +1,7 @@
 import { useRef } from 'react';
-import { useScrollSpy } from '../../hooks/useScrollSpy';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { SCROLL_SPY_CODE } from '../../data/demoCode';
+import { useScrollSpy } from '../hooks/useScrollSpy';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { SCROLL_SPY_CODE } from '../data/demoCode';
 
 const SECTIONS = [
   {

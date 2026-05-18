@@ -1,7 +1,7 @@
 import { useRef, useState, useMemo, useEffect } from 'react';
-import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { THRESHOLD_CODE } from '../../data/demoCode';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { THRESHOLD_CODE } from '../data/demoCode';
 
 const PRESET_THRESHOLDS = [0, 0.25, 0.5, 0.75, 1];
 

@@ -1,7 +1,7 @@
 import { useRef, useMemo } from 'react';
-import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { ENTRY_PROPERTIES_CODE } from '../../data/demoCode';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { ENTRY_PROPERTIES_CODE } from '../data/demoCode';
 
 function DomRectDisplay({ label, rect, color }) {
   if (!rect) return (

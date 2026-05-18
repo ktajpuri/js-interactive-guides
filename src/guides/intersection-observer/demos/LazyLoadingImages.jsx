@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
-import { CodeBlock } from '../Layout/CodeBlock';
-import { LAZY_LOADING_CODE } from '../../data/demoCode';
+import { CodeBlock } from '../../../components/Layout/CodeBlock';
+import { LAZY_LOADING_CODE } from '../data/demoCode';
 
 const IMAGE_COUNT = 20;
 

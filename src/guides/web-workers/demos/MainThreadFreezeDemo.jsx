@@ -2,27 +2,23 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { CodeBlock } from '../../../components/Layout/CodeBlock';
 import { WORKER_BASICS_CODE } from '../data/demoCode';
 
-// ── Sieve helpers ──────────────────────────────────────────────────────────────
+// ── Naive Fibonacci — O(2^n), genuinely exponential, V8 can't optimize it away ──
+// fib(40) ≈ 1–3s, fib(42) ≈ 3–8s, fib(44) ≈ 10–25s on modern hardware.
+// Each call spawns two more — ~2^n total recursive calls, thrashing the call stack.
 
-function runSieveMainThread(n) {
-  const sieve = new Uint8Array(n + 1);
-  for (let i = 2; i * i <= n; i++) {
-    if (!sieve[i]) for (let j = i * i; j <= n; j += i) sieve[j] = 1;
-  }
-  let count = 0;
-  for (let i = 2; i <= n; i++) if (!sieve[i]) count++;
-  return count;
+function naiveFib(n) {
+  if (n <= 1) return n;
+  return naiveFib(n - 1) + naiveFib(n - 2);
 }
 
 const WORKER_SRC = `
+  function fib(n) {
+    if (n <= 1) return n;
+    return fib(n - 1) + fib(n - 2);
+  }
   self.onmessage = ({ data: { n } }) => {
-    const sieve = new Uint8Array(n + 1);
-    for (let i = 2; i * i <= n; i++) {
-      if (!sieve[i]) for (let j = i * i; j <= n; j += i) sieve[j] = 1;
-    }
-    let count = 0;
-    for (let i = 2; i <= n; i++) if (!sieve[i]) count++;
-    self.postMessage({ count });
+    const result = fib(n);
+    self.postMessage({ result });
   };
 `;
 
@@ -70,7 +66,7 @@ function PanelLabel({ title, subtitle, ok }) {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function MainThreadFreezeDemo() {
-  const [n, setN] = useState(12_000_000);
+  const [n, setN] = useState(42); // fib(42) ≈ 866M recursive calls
   const [mode, setMode] = useState('worker');
   const [status, setStatus] = useState('idle'); // 'idle' | 'running' | 'done:count:ms:freezeMs'
   const [fps, setFps] = useState(60);
@@ -151,19 +147,16 @@ export default function MainThreadFreezeDemo() {
 
     if (mode === 'main') {
       freezeStartRef.current = performance.now();
-      // One rAF delay so "Running…" renders, then block
+      // Two rAF delays so "Running…" renders before the synchronous block
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          const count = runSieveMainThread(n);
+          const result = naiveFib(n);
           const totalMs = performance.now() - t0;
           freezeEndRef.current = performance.now();
           const freezeMs = freezeEndRef.current - freezeStartRef.current;
           runningRef.current = false;
-          setStatus(`done:${count}:${totalMs.toFixed(0)}:${freezeMs.toFixed(0)}`);
-          // Queued clicks will fire immediately after this synchronous block
-          setTimeout(() => {
-            setQueuedClicks(clicksDuringFreezeRef.current);
-          }, 50);
+          setStatus(`done:${result}:${totalMs.toFixed(0)}:${freezeMs.toFixed(0)}`);
+          setTimeout(() => setQueuedClicks(clicksDuringFreezeRef.current), 50);
         });
       });
     } else {
@@ -173,7 +166,7 @@ export default function MainThreadFreezeDemo() {
       w.onmessage = ({ data }) => {
         const totalMs = performance.now() - t0;
         runningRef.current = false;
-        setStatus(`done:${data.count}:${totalMs.toFixed(0)}:0`);
+        setStatus(`done:${data.result}:${totalMs.toFixed(0)}:0`);
         setQueuedClicks(0);
         w.terminate();
         workerRef.current = null;
@@ -207,10 +200,11 @@ export default function MainThreadFreezeDemo() {
         </div>
         <h1 className="text-3xl font-bold text-white">Main Thread Freeze</h1>
         <p className="text-gray-400 mt-3 leading-relaxed">
-          Three live animations run simultaneously. Run the prime sieve on the{' '}
-          <span className="font-mono text-white text-sm">main thread</span> and watch all three
-          freeze at once. Switch to a <span className="font-mono text-white text-sm">Web Worker</span>{' '}
-          — they all stay smooth.
+          Three live animations run simultaneously. Compute naive Fibonacci on the{' '}
+          <span className="font-mono text-white text-sm">main thread</span> — each call spawns two more,
+          making ~2<sup>n</sup> total calls. Watch all three freeze. Switch to a{' '}
+          <span className="font-mono text-white text-sm">Web Worker</span> — same exponential work,
+          animations stay smooth.
         </p>
       </header>
 
@@ -289,20 +283,24 @@ export default function MainThreadFreezeDemo() {
           {/* N slider */}
           <div className="space-y-2">
             <label className="text-sm text-gray-300">
-              N = <span className="font-mono font-bold text-cyan-400">{n.toLocaleString()}</span>
+              fib(<span className="font-mono font-bold text-cyan-400">{n}</span>)
+              <span className="text-gray-500 text-xs ml-2">
+                — ~2<sup>{n}</sup> recursive calls
+              </span>
             </label>
             <input
               type="range"
-              min={2_000_000}
-              max={20_000_000}
-              step={1_000_000}
+              min={38}
+              max={46}
+              step={1}
               value={n}
               onChange={(e) => { setN(Number(e.target.value)); setStatus('idle'); }}
               className="w-full accent-cyan-500"
             />
             <div className="flex justify-between text-xs text-gray-600">
-              <span>2M (~0.5s)</span>
-              <span>20M (~5s)</span>
+              <span>38 (~0.5s)</span>
+              <span>43 (~15s)</span>
+              <span>46 (💀)</span>
             </div>
           </div>
 
@@ -386,9 +384,9 @@ export default function MainThreadFreezeDemo() {
 
           {statusParts && (
             <div className="space-y-3 flex-1">
-              {/* Primes found */}
+              {/* Result */}
               <div className="bg-gray-950 rounded-lg p-4 border border-gray-800 text-center">
-                <div className="text-xs text-gray-500 mb-1">Primes found up to {n.toLocaleString()}</div>
+                <div className="text-xs text-gray-500 mb-1">fib({n}) =</div>
                 <div className="text-2xl font-mono font-bold text-white">
                   {doneCount?.toLocaleString()}
                 </div>

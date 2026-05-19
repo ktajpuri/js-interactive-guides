@@ -1,19 +1,15 @@
-import { useState, useEffect, useRef, useMemo, memo } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { CodeBlock } from '../../../components/Layout/CodeBlock';
 import { MEMO_CODE } from '../data/demoCode';
 
 // ---------------------------------------------------------------------------
 // Expensive child — burns ~3ms of CPU in its render body
+// countRef: a ref owned by the parent; child increments it each render
+// (no state updates = no infinite re-render loop)
 // ---------------------------------------------------------------------------
-function ExpensiveChild({ value, onRender }) {
-  const renderCountRef = useRef(0);
-  renderCountRef.current += 1;
-  const [flashKey, setFlashKey] = useState(0);
-
-  useEffect(() => {
-    setFlashKey(k => k + 1);
-    onRender?.(renderCountRef.current);
-  }); // runs after every render
+function ExpensiveChild({ value, countRef }) {
+  countRef.current += 1;
+  const flashKey = countRef.current; // changes each render → replays CSS anim
 
   // Simulate expensive render work (~3ms)
   const start = performance.now();
@@ -23,7 +19,7 @@ function ExpensiveChild({ value, onRender }) {
     <div className="relative rounded border border-gray-700 bg-gray-800 p-3">
       <div key={flashKey} className="node-flash absolute inset-0 rounded bg-sky-400/40 pointer-events-none" />
       <div className="text-xs text-gray-400">ExpensiveChild</div>
-      <div className="text-xs font-mono text-sky-400">renders: {renderCountRef.current}</div>
+      <div className="text-xs font-mono text-sky-400">renders: {countRef.current}</div>
       <div className="text-xs text-gray-600">value prop: {value}</div>
     </div>
   );
@@ -33,21 +29,15 @@ const ExpensiveChildMemo = memo(ExpensiveChild);
 // ---------------------------------------------------------------------------
 // Cheap child — trivial render (no artificial delay)
 // ---------------------------------------------------------------------------
-function CheapChild({ value, onRender }) {
-  const renderCountRef = useRef(0);
-  renderCountRef.current += 1;
-  const [flashKey, setFlashKey] = useState(0);
-
-  useEffect(() => {
-    setFlashKey(k => k + 1);
-    onRender?.(renderCountRef.current);
-  }); // runs after every render
+function CheapChild({ value, countRef }) {
+  countRef.current += 1;
+  const flashKey = countRef.current;
 
   return (
     <div className="relative rounded border border-gray-700 bg-gray-800 p-3">
       <div key={flashKey} className="node-flash absolute inset-0 rounded bg-sky-400/40 pointer-events-none" />
       <div className="text-xs text-gray-400">CheapChild</div>
-      <div className="text-xs font-mono text-sky-400">renders: {renderCountRef.current}</div>
+      <div className="text-xs font-mono text-sky-400">renders: {countRef.current}</div>
       <div className="text-xs text-gray-600">value prop: {value}</div>
     </div>
   );
@@ -69,6 +59,10 @@ export default function MemoUsefulnessDemo() {
   const parentRenderRef = useRef(0);
   parentRenderRef.current += 1;
 
+  // Refs for child render counts — children write here directly (no state callbacks)
+  const expensiveCountRef = useRef(0);
+  const cheapCountRef = useRef(0);
+
   // Auto-tick interval
   useEffect(() => {
     if (running) {
@@ -80,6 +74,15 @@ export default function MemoUsefulnessDemo() {
     }
     return () => clearInterval(intervalRef.current);
   }, [running]);
+
+  // Poll child render counts every 200ms to update display state
+  useEffect(() => {
+    const poll = setInterval(() => {
+      setExpensiveRenders(expensiveCountRef.current);
+      setCheapRenders(cheapCountRef.current);
+    }, 200);
+    return () => clearInterval(poll);
+  }, []);
 
   const showVerdict = parentRenderRef.current > 5;
   const showComparison = expensiveRenders > 3 && cheapRenders > 3;
@@ -152,8 +155,8 @@ export default function MemoUsefulnessDemo() {
           </button>
 
           {memoA
-            ? <ExpensiveChildMemo value={42} onRender={setExpensiveRenders} />
-            : <ExpensiveChild value={42} onRender={setExpensiveRenders} />
+            ? <ExpensiveChildMemo value={42} countRef={expensiveCountRef} />
+            : <ExpensiveChild value={42} countRef={expensiveCountRef} />
           }
 
           <div className="space-y-1">
@@ -197,8 +200,8 @@ export default function MemoUsefulnessDemo() {
           </button>
 
           {memoB
-            ? <CheapChildMemo value={42} onRender={setCheapRenders} />
-            : <CheapChild value={42} onRender={setCheapRenders} />
+            ? <CheapChildMemo value={42} countRef={cheapCountRef} />
+            : <CheapChild value={42} countRef={cheapCountRef} />
           }
 
           <div className="space-y-1">

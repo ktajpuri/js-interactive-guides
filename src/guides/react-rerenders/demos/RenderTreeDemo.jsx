@@ -17,14 +17,10 @@ const FLASH_STYLE = `
 function useRenderFlash() {
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
-
-  const [flashKey, setFlashKey] = useState(0);
-
-  useEffect(() => {
-    setFlashKey(k => k + 1);
-  }); // no deps — runs after every render
-
-  return { renderCount: renderCountRef.current, flashKey };
+  // No useState/useEffect — using the ref value directly as flashKey means
+  // the overlay div gets a new `key` on every external re-render, replaying
+  // the CSS animation, without triggering any additional re-renders itself.
+  return { renderCount: renderCountRef.current, flashKey: renderCountRef.current };
 }
 
 // ─── NodeCard UI primitive ─────────────────────────────────────────────────────

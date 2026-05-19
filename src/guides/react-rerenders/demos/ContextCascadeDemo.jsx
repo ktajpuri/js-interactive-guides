@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useRef, useEffect } from 'react';
+import { useState, useContext, createContext, useRef } from 'react';
 import { CodeBlock } from '../../../components/Layout/CodeBlock';
 import { CONTEXT_CASCADE_CODE } from '../data/demoCode';
 
@@ -16,8 +16,9 @@ function SingleCtxConsumer({ name, reads, field }) {
   const ctx = useContext(SingleCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
-  const [flashKey, setFlashKey] = useState(0);
-  useEffect(() => { setFlashKey(k => k + 1); });
+  const flashKey = renderCountRef.current;
+  
+  
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />
@@ -37,8 +38,9 @@ function CountCtxConsumer({ name }) {
   const count = useContext(CountCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
-  const [flashKey, setFlashKey] = useState(0);
-  useEffect(() => { setFlashKey(k => k + 1); });
+  const flashKey = renderCountRef.current;
+  
+  
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />
@@ -56,8 +58,9 @@ function ThemeCtxConsumer({ name }) {
   const theme = useContext(ThemeCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
-  const [flashKey, setFlashKey] = useState(0);
-  useEffect(() => { setFlashKey(k => k + 1); });
+  const flashKey = renderCountRef.current;
+  
+  
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />
@@ -75,8 +78,9 @@ function UserCtxConsumer({ name }) {
   const user = useContext(UserCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
-  const [flashKey, setFlashKey] = useState(0);
-  useEffect(() => { setFlashKey(k => k + 1); });
+  const flashKey = renderCountRef.current;
+  
+  
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />

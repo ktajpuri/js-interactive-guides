@@ -1,9 +1,10 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 
 /**
- * Returns { renderCount, flashKey } where flashKey increments on every render.
+ * Returns { renderCount, flashKey } where flashKey equals renderCount.
  * Use flashKey as a `key` prop on a flash overlay element so React remounts it
- * each render, replaying its CSS animation.
+ * on every external re-render, replaying its CSS animation — without causing
+ * any additional re-renders itself.
  *
  * Example:
  *   const { renderCount, flashKey } = useRenderFlash();
@@ -17,15 +18,10 @@ import { useRef, useEffect, useState } from 'react';
 export function useRenderFlash() {
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
-
-  const [flashKey, setFlashKey] = useState(0);
-
-  useEffect(() => {
-    setFlashKey(k => k + 1);
-  }); // no deps → runs after every render
-
+  // Using the ref value directly as flashKey avoids the useState/useEffect
+  // infinite-loop pattern (setState in no-dep useEffect → re-render → repeat).
   return {
     renderCount: renderCountRef.current,
-    flashKey,
+    flashKey: renderCountRef.current,
   };
 }

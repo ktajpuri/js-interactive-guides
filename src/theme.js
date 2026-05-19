@@ -44,6 +44,15 @@ export const GUIDE_COLORS = {
     icon:      'bg-cyan-900/30 text-cyan-300',
     glow:      'hover:shadow-cyan-900/20',
   },
+  teal: {
+    active:    'bg-teal-600 text-white',
+    badge:     'bg-teal-500 text-white',
+    inactive:  'bg-gray-800 text-gray-500',
+    border:    'border-teal-700/40 hover:border-teal-500/70',
+    cardBadge: 'bg-teal-900/40 text-teal-400',
+    icon:      'bg-teal-900/30 text-teal-300',
+    glow:      'hover:shadow-teal-900/20',
+  },
   sky: {
     active:    'bg-sky-600 text-white',
     badge:     'bg-sky-500 text-white',

@@ -6,6 +6,7 @@ import webWorkersConfig from './web-workers/config';
 import memoryGcConfig from './memory-gc/config';
 import renderingPipelineConfig from './rendering-pipeline/config';
 import reactRerendersConfig from './react-rerenders/config';
+import httpCachingConfig from './http-caching/config';
 
 export const GUIDES = [
   intersectionObserverConfig,
@@ -16,4 +17,5 @@ export const GUIDES = [
   memoryGcConfig,
   renderingPipelineConfig,
   reactRerendersConfig,
+  httpCachingConfig,
 ];

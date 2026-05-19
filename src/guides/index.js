@@ -5,6 +5,7 @@ import resizeObserverConfig from './resize-observer/config';
 import webWorkersConfig from './web-workers/config';
 import memoryGcConfig from './memory-gc/config';
 import renderingPipelineConfig from './rendering-pipeline/config';
+import reactRerendersConfig from './react-rerenders/config';
 
 export const GUIDES = [
   intersectionObserverConfig,
@@ -14,4 +15,5 @@ export const GUIDES = [
   webWorkersConfig,
   memoryGcConfig,
   renderingPipelineConfig,
+  reactRerendersConfig,
 ];

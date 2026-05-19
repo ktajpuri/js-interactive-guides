@@ -52,14 +52,17 @@ export default function MemoUsefulnessDemo() {
   const [memoA, setMemoA] = useState(false);
   const [memoB, setMemoB] = useState(false);
   const [running, setRunning] = useState(false);
-  const [expensiveRenders, setExpensiveRenders] = useState(0);
-  const [cheapRenders, setCheapRenders] = useState(0);
 
   const intervalRef = useRef(null);
   const parentRenderRef = useRef(0);
   parentRenderRef.current += 1;
 
-  // Refs for child render counts — children write here directly (no state callbacks)
+  // Refs for child render counts — children write here directly.
+  // We read these refs in JSX below; the display updates naturally on every
+  // parent render (auto-tick or memo-toggle clicks). NO polling interval —
+  // a setInterval that calls setState would create a self-sustaining cycle:
+  //   poll → setState → parent renders → children render → ref bumps →
+  //   next poll sees new value → setState → ... (5 Hz forever, even idle).
   const expensiveCountRef = useRef(0);
   const cheapCountRef = useRef(0);
 
@@ -75,15 +78,9 @@ export default function MemoUsefulnessDemo() {
     return () => clearInterval(intervalRef.current);
   }, [running]);
 
-  // Poll child render counts every 200ms to update display state
-  useEffect(() => {
-    const poll = setInterval(() => {
-      setExpensiveRenders(expensiveCountRef.current);
-      setCheapRenders(cheapCountRef.current);
-    }, 200);
-    return () => clearInterval(poll);
-  }, []);
-
+  // Read ref values once per render for display (stable within this render).
+  const expensiveRenders = expensiveCountRef.current;
+  const cheapRenders = cheapCountRef.current;
   const showVerdict = parentRenderRef.current > 5;
   const showComparison = expensiveRenders > 3 && cheapRenders > 3;
 

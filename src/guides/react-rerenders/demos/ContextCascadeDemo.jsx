@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, useRef } from 'react';
+import { useState, useContext, createContext, useRef, memo } from 'react';
 import { CodeBlock } from '../../../components/Layout/CodeBlock';
 import { CONTEXT_CASCADE_CODE } from '../data/demoCode';
 
@@ -12,13 +12,13 @@ const UserCtx  = createContext('Alice');
 
 // ── Individual consumer components for Mode A ─────────────────────────────
 
-function SingleCtxConsumer({ name, reads, field }) {
+const SingleCtxConsumer = memo(function SingleCtxConsumer({ name, reads, field }) {
   const ctx = useContext(SingleCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
   const flashKey = renderCountRef.current;
-  
-  
+
+
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />
@@ -30,17 +30,17 @@ function SingleCtxConsumer({ name, reads, field }) {
       </div>
     </div>
   );
-}
+});
 
 // ── Individual consumer components for Mode B ─────────────────────────────
 
-function CountCtxConsumer({ name }) {
+const CountCtxConsumer = memo(function CountCtxConsumer({ name }) {
   const count = useContext(CountCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
   const flashKey = renderCountRef.current;
-  
-  
+
+
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />
@@ -52,15 +52,15 @@ function CountCtxConsumer({ name }) {
       </div>
     </div>
   );
-}
+});
 
-function ThemeCtxConsumer({ name }) {
+const ThemeCtxConsumer = memo(function ThemeCtxConsumer({ name }) {
   const theme = useContext(ThemeCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
   const flashKey = renderCountRef.current;
-  
-  
+
+
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />
@@ -72,15 +72,15 @@ function ThemeCtxConsumer({ name }) {
       </div>
     </div>
   );
-}
+});
 
-function UserCtxConsumer({ name }) {
+const UserCtxConsumer = memo(function UserCtxConsumer({ name }) {
   const user = useContext(UserCtx);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
   const flashKey = renderCountRef.current;
-  
-  
+
+
   return (
     <div className="relative rounded-lg border border-gray-700 bg-gray-800 p-2 text-xs">
       <div key={flashKey} className="ctx-flash absolute inset-0 rounded-lg bg-sky-400/40 pointer-events-none" />
@@ -92,7 +92,7 @@ function UserCtxConsumer({ name }) {
       </div>
     </div>
   );
-}
+});
 
 // ── Consumer definitions ──────────────────────────────────────────────────
 

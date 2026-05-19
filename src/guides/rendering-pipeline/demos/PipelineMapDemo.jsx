@@ -106,7 +106,7 @@ export default function PipelineMapDemo() {
           <div className="flex gap-3 items-center">
             {/* LAYOUT */}
             <div
-              key={flashCounts.layout}
+              key={`layout-${flashCounts.layout}`}
               className={`flex-1 rounded-lg border-2 p-4 text-center transition-all duration-300 ${active?.triggers.includes('layout') ? 'border-red-400 bg-red-900/50' : 'border-red-700/40 bg-red-950/20'}`}
               style={active?.triggers.includes('layout') ? { animation: 'stageFlash 700ms ease-out' } : {}}
             >
@@ -118,7 +118,7 @@ export default function PipelineMapDemo() {
 
             {/* PAINT */}
             <div
-              key={flashCounts.paint}
+              key={`paint-${flashCounts.paint}`}
               className={`flex-1 rounded-lg border-2 p-4 text-center transition-all duration-300 ${active?.triggers.includes('paint') ? 'border-yellow-400 bg-yellow-900/50' : 'border-yellow-700/40 bg-yellow-950/20'}`}
               style={active?.triggers.includes('paint') ? { animation: 'stageFlash 700ms ease-out' } : {}}
             >
@@ -130,7 +130,7 @@ export default function PipelineMapDemo() {
 
             {/* COMPOSITE */}
             <div
-              key={flashCounts.composite}
+              key={`composite-${flashCounts.composite}`}
               className={`flex-1 rounded-lg border-2 p-4 text-center transition-all duration-300 ${active?.triggers.includes('composite') ? 'border-green-400 bg-green-900/50' : 'border-green-700/40 bg-green-950/20'}`}
               style={active?.triggers.includes('composite') ? { animation: 'stageFlash 700ms ease-out' } : {}}
             >

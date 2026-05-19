@@ -210,7 +210,7 @@ export default function DebounceThrottleDemo() {
         <div className="inline-flex items-center gap-2 bg-orange-900/30 text-orange-400 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-orange-800/50">
           Demo 5
         </div>
-        <h1 className="text-3xl font-bold text-white">Debounce / Throttle / rAF Throttle</h1>
+        <h1 className="text-3xl font-bold text-white">Debounce / Throttle / rAF</h1>
         <p className="text-gray-400 mt-3 leading-relaxed">
           Four rate-limiting strategies applied to the same stream of <span className="text-white font-mono text-sm">mousemove</span> events.
           Move your mouse over the interaction area to see how each strategy filters the event flood differently.
